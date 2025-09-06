@@ -1,9 +1,8 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { getDB } = require("../config/database");
+const { generateJWT } = require("../config/auth");
 
 const encryptionRounds = 10;
-const JWT_SECRET = "6111-webx-secret";
 
 async function encryptPassword(password) {
   return await bcrypt.hash(password, encryptionRounds);
@@ -13,39 +12,42 @@ async function verifyPassword(password, hashedPassword) {
   return await bcrypt.compare(password, hashedPassword);
 }
 
-function generateJWT(userId, username) {
-  return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: "24h" });
-}
-
-async function registerUser(username, password) {
+async function registerUser(email, password, displayName) {
   try {
     // Input validation
-    if (!username || !password) {
-      return { success: false, error: "Username and password are required" };
+    if (!email || !password) {
+      return { success: false, error: "Email and password are required" };
     }
 
-    if (username.trim().length === 0 || password.length === 0) {
-      return { success: false, error: "Username and password cannot be empty" };
+    if (email.trim().length === 0 || password.length === 0) {
+      return { success: false, error: "Email and password cannot be empty" };
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return { success: false, error: "Invalid email format" };
     }
 
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Check if username already exists
-    const existingUser = await usersCollection.findOne({
-      username: username.trim(),
-    });
+    // Check if email already exists
+    const existingUser = await usersCollection.findOne({ email: email.trim() });
     if (existingUser) {
-      return { success: false, error: "Username already exists" };
+      return { success: false, error: "Email already exists" };
     }
 
     // Hash password
     const hashedPassword = await encryptPassword(password);
 
-    // Create new user
+    // Create new user with new schema
     const newUser = {
-      username: username.trim(),
-      password: hashedPassword,
+      email: email.trim(),
+      password: hashedPassword, // Store hashed password (not in spec but needed)
+      ethAddresses: null,
+      displayName: displayName || email.split("@")[0], // Default to email prefix if not provided
+      posts: [], // Initialize empty posts array
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -54,8 +56,7 @@ async function registerUser(username, password) {
 
     return {
       success: true,
-      message: "User registered successfully",
-      userId: result.insertedId,
+      userID: result.insertedId.toString(),
     };
   } catch (error) {
     console.error("[ERROR] Registration failed:", error);
@@ -63,18 +64,18 @@ async function registerUser(username, password) {
   }
 }
 
-async function loginUser(username, password) {
+async function loginUser(email, password) {
   try {
     // Input validation
-    if (!username || !password) {
-      return { success: false, error: "Username and password are required" };
+    if (!email || !password) {
+      return { success: false, error: "Email and password are required" };
     }
 
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Find user by username
-    const user = await usersCollection.findOne({ username: username.trim() });
+    // Find user by email
+    const user = await usersCollection.findOne({ email: email.trim() });
     if (!user) {
       return { success: false, error: "User not found" };
     }
@@ -85,17 +86,15 @@ async function loginUser(username, password) {
       return { success: false, error: "Invalid password" };
     }
 
-    // Generate JWT token
-    const token = generateJWT(user._id.toString(), user.username);
+    // Generate JWT token using centralized function
+    const token = generateJWT(user._id.toString(), user.email);
 
     return {
       success: true,
-      message: "Login successful",
+      userID: user._id.toString(),
+      displayName: user.displayName,
+      posts: user.posts || [],
       token: token,
-      user: {
-        id: user._id,
-        username: user.username,
-      },
     };
   } catch (error) {
     console.error("[ERROR] Login failed:", error);
@@ -103,7 +102,34 @@ async function loginUser(username, password) {
   }
 }
 
+async function getUserById(userId) {
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne({ _id: userId });
+    if (!user) {
+      return { success: false, error: "User not found" };
+    }
+
+    return {
+      success: true,
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        ethAddresses: user.ethAddresses,
+        displayName: user.displayName,
+        posts: user.posts || [],
+      },
+    };
+  } catch (error) {
+    console.error("[ERROR] Get user failed:", error);
+    return { success: false, error: "Failed to get user" };
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
+  getUserById,
 };

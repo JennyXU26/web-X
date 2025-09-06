@@ -26,11 +26,21 @@ npm start
 The server will run on http://localhost:3000
 
 ### Available Endpoints
-- `GET /` - Interactive Hello World page (HTML/CSS/JS)
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User authentication
+
+**Frontend:**
+- `GET /` - Mini X frontend application (HTML/CSS/JS)
 - `GET /css/*` - Static CSS files
 - `GET /js/*` - Static JavaScript files
+
+**Authentication API:**
+- `POST /auth/register` - User registration with email/password
+  - Body: `{ email, password, displayName? }`
+  - Returns: `{ userID }`
+- `POST /auth/login` - User authentication 
+  - Body: `{ email, password }`
+  - Returns: `{ userID, displayName, posts[] }`
+- `GET /auth/verify` - Verify JWT token (from cookie)
+  - Returns: `{ success, userId, email }`
 
 ## Development
 For development mode, you can also run:
@@ -40,24 +50,22 @@ npm run dev
 
 ## Project Structure
 ```
-├── server.js              # Main server entry point
-├── public/                # Static files (served at root)
-│   ├── index.html         # Main HTML page
+├── server.js              # Main server entry point with Express configuration
+├── config/                # Configuration files
+│   ├── auth.js            # JWT configuration and utilities
+│   └── database.js        # MongoDB connection configuration
+├── routes/                # API route handlers
+│   └── auth.js            # Authentication routes (/auth/*)
+├── services/              # Business logic layer
+│   └── auth.js            # Authentication service (registration, login)
+├── public/                # Static web files (served at root)
+│   ├── index.html         # Frontend application (Mini X)
 │   ├── css/
 │   │   └── style.css      # Styling and animations
 │   └── js/
-│       └── script.js      # Client-side JavaScript
-├── config/
-│   └── database.js         # MongoDB connection configuration
-├── public/
-│   └── index.html          # Frontend
-│   └── script.js
-│   └── styles.css
-├── routes/
-│   └── auth.js            # Authentication API routes
-├── services/
-│   └── auth.js            # Authentication business logic
-├── package.json           # Project dependencies and scripts
-├── .gitignore            # Git ignore rules
+│       └── script.js      # Client-side JavaScript functionality
+├── package.json           # Node.js dependencies and npm scripts
+├── package-lock.json      # Exact dependency versions
+├── .gitignore            # Git ignore rules for Node.js
 └── README.md             # Project documentation
 ```
