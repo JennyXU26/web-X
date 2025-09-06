@@ -26,8 +26,11 @@ npm start
 The server will run on http://localhost:3000
 
 ### Available Endpoints
-- `GET /` - Welcome message
-- `GET /test_db` - MongoDB KV operations test page (counter demo)
+- `GET /` - Interactive Hello World page (HTML/CSS/JS)
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User authentication
+- `GET /css/*` - Static CSS files
+- `GET /js/*` - Static JavaScript files
 
 ## Development
 For development mode, you can also run:
@@ -38,10 +41,18 @@ npm run dev
 ## Project Structure
 ```
 ├── server.js              # Main server entry point
+├── public/                # Static files (served at root)
+│   ├── index.html         # Main HTML page
+│   ├── css/
+│   │   └── style.css      # Styling and animations
+│   └── js/
+│       └── script.js      # Client-side JavaScript
 ├── config/
-│   └── database.js         # MongoDB connection configuration
+│   └── database.js        # MongoDB connection configuration
 ├── routes/
-│   └── testdb.js          # Test database routes
+│   └── auth.js            # Authentication API routes
+├── services/
+│   └── auth.js            # Authentication business logic
 ├── package.json           # Project dependencies and scripts
 ├── .gitignore            # Git ignore rules
 └── README.md             # Project documentation
