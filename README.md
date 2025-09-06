@@ -8,7 +8,7 @@ https://docs.google.com/document/d/1QzG_ChycGgjcTCdbPzeXzMaEnG6kHxIX4vmuqIFYPKQ/
 ## Quick Start
 
 ### Prerequisites
-- Node.js installed on your system
+- Node.js installed
 
 ### Installation
 1. Clone the repository
@@ -27,7 +27,7 @@ The server will run on http://localhost:3000
 
 ### Available Endpoints
 - `GET /` - Welcome message
-- `GET /api/status` - Server status information
+- `GET /test_db` - MongoDB KV operations test page (counter demo)
 
 ## Development
 For development mode, you can also run:
@@ -36,5 +36,11 @@ npm run dev
 ```
 
 ## Project Structure
-- `server.js` - Main server file with Express.js configuration
-- `package.json` - Project dependencies and scripts
+├── server.js              # Main server entry point
+├── config/
+│   └── database.js         # MongoDB connection configuration
+├── routes/
+│   └── testdb.js          # Test database routes
+├── package.json           # Project dependencies and scripts
+├── .gitignore            # Git ignore rules
+└── README.md             # Project documentation
