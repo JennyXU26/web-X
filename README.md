@@ -40,6 +40,10 @@ npm run dev
 ├── server.js              # Main server entry point
 ├── config/
 │   └── database.js         # MongoDB connection configuration
+├── public/
+│   └── index.html          # Frontend
+│   └── script.js
+│   └── styles.css
 ├── routes/
 │   └── testdb.js          # Test database routes
 ├── package.json           # Project dependencies and scripts
