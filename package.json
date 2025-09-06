@@ -1,0 +1,23 @@
+{
+  "name": "web-x",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JennyXU26/web-X.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/JennyXU26/web-X/issues"
+  },
+  "homepage": "https://github.com/JennyXU26/web-X#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
