@@ -36,6 +36,7 @@ npm run dev
 ```
 
 ## Project Structure
+```
 ├── server.js              # Main server entry point
 ├── config/
 │   └── database.js         # MongoDB connection configuration
@@ -44,3 +45,4 @@ npm run dev
 ├── package.json           # Project dependencies and scripts
 ├── .gitignore            # Git ignore rules
 └── README.md             # Project documentation
+```
