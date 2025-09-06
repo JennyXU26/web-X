@@ -48,7 +48,11 @@ npm run dev
 │   └── js/
 │       └── script.js      # Client-side JavaScript
 ├── config/
-│   └── database.js        # MongoDB connection configuration
+│   └── database.js         # MongoDB connection configuration
+├── public/
+│   └── index.html          # Frontend
+│   └── script.js
+│   └── styles.css
 ├── routes/
 │   └── auth.js            # Authentication API routes
 ├── services/
