@@ -4,7 +4,7 @@ class TwitterClone {
   constructor() {
     this.currentPage = 1;
     this.postsPerPage = 10;
-    this.baseURL = "http://localhost";
+    this.baseURL = "http://localhost:3000";
     this.posts = [];
     this.totalPages = 1;
 
@@ -147,19 +147,17 @@ class TwitterClone {
     loadingSpinner.style.display = "block";
 
     try {
-      const response = await fetch(`${this.baseURL}/?page=${page}`);
+      // Convert 1-based frontend page to 0-based API page
+      const apiPage = page - 1;
+      const response = await fetch(`${this.baseURL}/posts?page=${apiPage}`);
 
       if (response.ok) {
         const data = await response.json();
         this.posts = data.posts || [];
         this.currentPage = page;
 
-        // Calculate total pages (assuming we get info about total posts)
-        // For now, we'll estimate based on returned posts
-        this.totalPages = Math.max(
-          1,
-          Math.ceil(this.posts.length / this.postsPerPage),
-        );
+        // Use pageNum from server response for total pages
+        this.totalPages = data.pageNum || 1;
 
         this.renderPosts();
         this.renderPagination();
@@ -174,7 +172,7 @@ class TwitterClone {
     }
   }
 
-  renderPosts() {
+  async renderPosts() {
     const postsContainer = document.getElementById("postsContainer");
 
     if (this.posts.length === 0) {
@@ -182,61 +180,101 @@ class TwitterClone {
       return;
     }
 
-    const postsHTML = this.posts
-      .map((post, index) => {
-        // Generate mock data for demonstration
-        const postId = `post_${Date.now()}_${index}`;
-        const author = `user${Math.floor(Math.random() * 1000)}`;
-        const timeAgo = this.getRandomTimeAgo();
-        const avatar = author.charAt(0).toUpperCase();
+    // Show loading state while fetching post details
+    postsContainer.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"></div></div>';
 
-        return `
-                <div class="post-card" data-post-id="${postId}">
-                    <div class="d-flex">
-                        <div class="post-avatar me-3">
-                            ${avatar}
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items-center mb-2">
-                                <strong class="me-2">@${author}</strong>
-                                <span class="post-meta">${timeAgo}</span>
-                            </div>
-                            <div class="post-content">
-                                ${this.escapeHtml(post)}
-                            </div>
-                            <div class="post-actions">
-                                <a href="#" class="post-action">
-                                    <i class="bi bi-chat me-1"></i>
-                                    ${Math.floor(Math.random() * 50)}
-                                </a>
-                                <a href="#" class="post-action">
-                                    <i class="bi bi-arrow-repeat me-1"></i>
-                                    ${Math.floor(Math.random() * 25)}
-                                </a>
-                                <a href="#" class="post-action">
-                                    <i class="bi bi-heart me-1"></i>
-                                    ${Math.floor(Math.random() * 100)}
-                                </a>
-                                <a href="#" class="post-action">
-                                    <i class="bi bi-share me-1"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-      })
-      .join("");
+    try {
+      // Fetch detailed information for each post
+      const postDetails = await Promise.all(
+        this.posts.map(async (postId) => {
+          try {
+            // Fetch post details
+            const postResponse = await fetch(`${this.baseURL}/posts/${postId}`);
+            if (!postResponse.ok) throw new Error('Failed to fetch post');
+            const postData = await postResponse.json();
 
-    postsContainer.innerHTML = postsHTML;
+            // Fetch user details
+            const userResponse = await fetch(`${this.baseURL}/users/${postData.author}`);
+            if (!userResponse.ok) throw new Error('Failed to fetch user');
+            const userData = await userResponse.json();
 
-    // Add animation to new posts
-    const postCards = postsContainer.querySelectorAll(".post-card");
-    postCards.forEach((card, index) => {
-      setTimeout(() => {
-        card.classList.add("new-post");
-      }, index * 50);
-    });
+            return {
+              id: postId,
+              text: postData.text,
+              author: postData.author,
+              createdAt: new Date(postData.createdAt),
+              displayName: userData.displayName
+            };
+          } catch (error) {
+            console.error(`Error fetching details for post ${postId}:`, error);
+            return {
+              id: postId,
+              text: 'Failed to load post content',
+              author: 'unknown',
+              createdAt: new Date(),
+              displayName: 'Unknown User'
+            };
+          }
+        })
+      );
+
+      // Generate HTML for posts with real data
+      const postsHTML = postDetails
+        .map((post) => {
+          const formattedDate = this.formatDate(post.createdAt);
+          
+          return `
+            <div class="post-card" data-post-id="${post.id}">
+              <div class="post-header">
+                <strong class="post-author">${this.escapeHtml(post.displayName)}</strong>
+              </div>
+              <hr class="post-divider">
+              <div class="post-content">
+                ${this.escapeHtml(post.text)}
+              </div>
+              <div class="post-footer">
+                <small class="post-date">${formattedDate}</small>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      postsContainer.innerHTML = postsHTML;
+
+      // Add animation to new posts
+      const postCards = postsContainer.querySelectorAll(".post-card");
+      postCards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add("new-post");
+        }, index * 50);
+      });
+
+    } catch (error) {
+      console.error('Error rendering posts:', error);
+      postsContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="bi bi-exclamation-triangle"></i>
+          <h5>Failed to load posts</h5>
+          <p>Please try refreshing the page.</p>
+        </div>
+      `;
+    }
+  }
+
+  formatDate(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString();
   }
 
   renderEmptyState() {

@@ -85,7 +85,8 @@ body {
     border-color: var(--border-gray);
 }
 
-.post-avatar {
+/* Post avatar */
+/* .post-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -101,6 +102,27 @@ body {
     font-weight: bold;
     font-size: 18px;
 }
+*/
+
+.post-header {
+    margin-bottom: 12px;
+}
+
+.post-author {
+    font-size: 16px;
+    color: var(--dark-gray);
+    font-weight: 600;
+}
+
+[data-bs-theme="dark"] .post-author {
+    color: var(--bs-body-color);
+}
+
+.post-divider {
+    margin: 12px 0;
+    border-color: var(--border-gray);
+    opacity: 0.5;
+}
 
 .post-content {
     font-size: 16px;
@@ -111,6 +133,16 @@ body {
 
 [data-bs-theme="dark"] .post-content {
     color: var(--bs-body-color);
+}
+
+.post-footer {
+    margin-top: 12px;
+    text-align: right;
+}
+
+.post-date {
+    color: var(--text-gray);
+    font-size: 12px;
 }
 
 .post-meta {

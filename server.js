@@ -3,6 +3,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/database");
 const authRoutes = require("./routes/auth");
+const postsRoutes = require("./routes/posts");
+const usersRoutes = require("./routes/users");
 const app = express();
 const PORT = 3000;
 
@@ -18,6 +20,8 @@ connectDB();
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/posts", postsRoutes);
+app.use("/users", usersRoutes);
 
 app.listen(PORT, "localhost", () => {
   console.log(`Server is running on http://localhost:${PORT}`);
