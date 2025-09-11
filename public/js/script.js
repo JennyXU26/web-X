@@ -15,10 +15,7 @@ class TwitterClone {
     this.setupEventListeners();
     this.loadPosts(1);
     this.initDarkMode();
-<<<<<<< HEAD
-=======
     this.checkAuthStatus();
->>>>>>> bd251892f602e2c03aa33a2f42958dbeb5fb68de
   }
 
   setupEventListeners() {
@@ -365,8 +362,6 @@ class TwitterClone {
     return div.innerHTML;
   }
 
-<<<<<<< HEAD
-=======
   async checkAuthStatus() {
     try {
       const response = await fetch(`${this.baseURL}/auth/verify`, {
@@ -471,7 +466,6 @@ class TwitterClone {
     }
   }
 
->>>>>>> bd251892f602e2c03aa33a2f42958dbeb5fb68de
   showToast(message, type = "info") {
     // Create toast element
     const toastHTML = `
