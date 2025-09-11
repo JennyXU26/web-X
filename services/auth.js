@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { getDB } = require("../config/database");
 const { generateJWT } = require("../config/auth");
+<<<<<<< HEAD
 const { ethers } = require("ethers");
 const crypto = require("crypto");
 const encryptionRounds = 10;
@@ -8,6 +9,10 @@ const { SiweMessage } = require("siwe");
 const jwt = require("jsonwebtoken");
 const { issueTeamToken } = require("../config/auth");
 const { ObjectId } = require("mongodb");
+=======
+
+const encryptionRounds = 10;
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
 
 async function encryptPassword(password) {
   return await bcrypt.hash(password, encryptionRounds);
@@ -138,6 +143,7 @@ module.exports = {
   loginUser,
   getUserById,
 };
+<<<<<<< HEAD
 
 //generate nonce
 function generateNonce(len = 17) {
@@ -596,3 +602,5 @@ async function bindSiweToAccount({ bindingToken, email, password, displayName })
 module.exports.siweIssueNonce = siweIssueNonce;
 module.exports.siweVerifyAndMaybeNeedBinding = siweVerifyAndMaybeNeedBinding;
 module.exports.bindSiweToAccount = bindSiweToAccount;
+=======
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df

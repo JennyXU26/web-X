@@ -41,6 +41,7 @@ The server will run on http://localhost:3000
   - Returns: `{ userID, displayName, posts[] }`
 - `GET /auth/verify` - Verify JWT token (from cookie)
   - Returns: `{ success, userId, email }`
+<<<<<<< HEAD
   
 **SIWE / MetaMask Authentication API:**
 - `GET /auth/siwe/nonce` - Get a nonce for SIWE message  
@@ -57,6 +58,8 @@ The server will run on http://localhost:3000
 - `GET /auth/siwe/verify` - Verify SIWE login status (via JWT in cookie)  
   - Returns: `{ success, userId, email, displayName, ethAddresses }`
 
+=======
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
 
 ## Development
 For development mode, you can also run:

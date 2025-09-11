@@ -22,6 +22,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
+<<<<<<< HEAD
     "ethers": "^6.15.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -29,3 +30,10 @@
     "siwe": "^3.0.0"
   }
 }
+=======
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.19.0"
+  }
+}
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df

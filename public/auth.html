@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,3 +99,89 @@
 </body>
 
 </html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini X - Login/Register Test</title>
+  <link rel="stylesheet" href="css/authcss.css">
+</head>
+<body>
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <h2 id="form-title">Login</h2>
+
+      <!-- 登录表单 -->
+      <form id="login-form">
+        <p class="message" id="login-message"></p>
+        <div class="form-group">
+          <label for="login-email">Email <span class="required">*</span></label>
+          <input type="text" id="login-email" placeholder="Enter your email" required>
+          <small class="error" id="login-username-error"></small>
+        </div>
+        <div class="form-group password-group">
+          <label for="login-password">Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input type="password" id="login-password" placeholder="Enter your password" required>
+            <span class="toggle-password" data-target="login-password">
+  <img width="12" height="12" src="https://img.icons8.com/fluency-systems-regular/12/visible--v1.png" alt="visible--v1"/>
+</span>
+
+          </div>
+          <small class="error" id="login-password-error"></small>
+        </div>
+        <button type="submit">Login</button>
+        <button type="button" id="metamask-login">Login with MetaMask</button>
+        <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+      </form>
+
+      <!-- 注册表单 -->
+      <form id="register-form" style="display:none;">
+        <p class="message" id="register-message"></p>
+
+        <div class="form-group">
+          <label for="register-username">Username <span class="required">*</span></label>
+          <input type="text" id="register-username" placeholder="Enter your username" required>
+          <small class="error" id="register-username-error"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="register-email">Email <span class="required">*</span></label>
+          <input type="text" id="register-email" placeholder="Enter your email" required>
+          <small class="error" id="register-email-error"></small>
+        </div>
+
+        <div class="form-group password-group">
+          <label for="register-password">Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input type="password" id="register-password" placeholder="Enter your password" required>
+            <span class="toggle-password" data-target="register-password">
+  <img width="12" height="12" src="https://img.icons8.com/fluency-systems-regular/12/visible--v1.png" alt="visible--v1"/>
+</span>
+          </div>
+          <small class="error" id="register-password-error"></small>
+        </div>
+
+        <div class="form-group password-group">
+          <label for="register-confirm">Confirm Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input type="password" id="register-confirm" placeholder="Confirm your password" required>
+            <span class="toggle-password" data-target="register-confirm">
+  <img width="12" height="12" src="https://img.icons8.com/fluency-systems-regular/12/visible--v1.png" alt="visible--v1"/>
+</span>
+            <span id="confirm-status" class="status-icon"></span>
+          </div>
+          <small class="error" id="register-confirm-error"></small>
+        </div>
+
+        <button type="submit">Register</button>
+        <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/authjs.js"></script>
+</body>
+</html>
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df

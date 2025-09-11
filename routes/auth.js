@@ -1,11 +1,15 @@
 const express = require("express");
 const { registerUser, loginUser } = require("../services/auth");
 const router = express.Router();
+<<<<<<< HEAD
 const {
   siweIssueNonce,
   siweVerifyAndMaybeNeedBinding,
   bindSiweToAccount
 } = require("../services/auth");
+=======
+
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
 // POST /auth/register
 router.post("/register", async (req, res) => {
   try {
@@ -118,7 +122,10 @@ router.get("/verify", async (req, res) => {
         success: true,
         userId: decoded.userId,
         email: decoded.email,
+<<<<<<< HEAD
         ethAddresses: decoded.ethAddresses
+=======
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
       });
     } catch (jwtError) {
       res.status(401).json({
@@ -136,6 +143,7 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+<<<<<<< HEAD
 
 //GET /auth/siwe/nonce
 router.get("/siwe/nonce", async (req, res) => {
@@ -262,3 +270,5 @@ router.post("/siwe/bind", async (req, res) => {
     return res.status(500).json({ error: "server_error" });
   }
 });
+=======
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df

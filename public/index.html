@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
+<<<<<<< HEAD
 
 <head>
     <meta charset="UTF-8" />
@@ -59,10 +60,91 @@
                 <div id="loadingSpinner" class="text-center my-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
+=======
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Web X</title>
+        <!-- Bootstrap 5 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+            rel="stylesheet"
+        />
+        <!-- Custom CSS -->
+        <link href="css/style.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav
+            class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top"
+        >
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-3 text-primary" href="#">
+                    <i class="bi bi-twitter"></i> Web X
+                </a>
+
+                <!-- Login Button and Dark Mode Toggle -->
+                <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+                    <button 
+                        class="btn btn-outline-primary rounded-pill me-3"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#authModal"
+                    >
+                        <i class="bi bi-person-circle me-1"></i>Login
+                    </button>
+                    <div class="form-check form-switch">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="darkModeToggle"
+                        />
+                        <label class="form-check-label" for="darkModeToggle">
+                            <i class="bi bi-moon-fill"></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Container -->
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <!-- Post Button -->
+                    <div class="text-center mb-4">
+                        <button
+                            class="btn btn-primary btn-lg rounded-pill px-4"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#postModal"
+                        >
+                            <i class="bi bi-plus-circle me-2"></i>What's
+                            happening?
+                        </button>
+                    </div>
+
+                    <!-- Posts Container -->
+                    <div id="postsContainer">
+                        <!-- Posts will be loaded here dynamically -->
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center my-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
 
     <!-- Floating Pagination -->
@@ -231,10 +313,74 @@
                     <div class="mb-4">
                         <label class="form-label text-muted small">Ethereum Address</label>
                         <div class="font-monospace small" id="profile-ethaddress">-</div>
+=======
+
+        <!-- Floating Pagination -->
+        <nav aria-label="Page navigation" class="fixed-bottom">
+            <div class="container d-flex justify-content-center pb-3">
+                <ul
+                    class="pagination pagination-sm bg-white rounded-pill shadow-lg border px-2 py-1"
+                    id="paginationContainer"
+                >
+                    <!-- Pagination will be generated dynamically -->
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Post Modal -->
+        <div
+            class="modal fade"
+            id="postModal"
+            tabindex="-1"
+            aria-labelledby="postModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold" id="postModalLabel">
+                            Create a new post
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="postForm">
+                            <div class="mb-3">
+                                <textarea
+                                    class="form-control border-0 fs-5"
+                                    id="postText"
+                                    rows="4"
+                                    placeholder="What's happening?"
+                                    maxlength="280"
+                                    style="resize: none"
+                                ></textarea>
+                            </div>
+                            <div
+                                class="d-flex justify-content-between align-items-center"
+                            >
+                                <small class="text-muted">
+                                    <span id="charCount">0</span>/280 characters
+                                </small>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary rounded-pill px-4"
+                                    id="submitPost"
+                                >
+                                    Post
+                                </button>
+                            </div>
+                        </form>
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
     <!-- Bootstrap 5 JS -->
@@ -246,3 +392,154 @@
 </body>
 
 </html>
+=======
+
+        <!-- Auth Modal -->
+        <div
+            class="modal fade"
+            id="authModal"
+            tabindex="-1"
+            aria-labelledby="authModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold" id="authModalLabel">
+                            Login
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Login Form -->
+                        <form id="login-form">
+                            <p class="message text-center" id="login-message"></p>
+                            <div class="mb-3">
+                                <label for="login-email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="login-email" placeholder="Enter your email" required>
+                                <div class="invalid-feedback" id="login-username-error"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="login-password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="login-password" placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="login-password-error"></div>
+                            </div>
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                                <button type="button" class="btn btn-outline-warning" id="metamask-login">
+                                    <i class="bi bi-wallet2 me-2"></i>Login with MetaMask
+                                </button>
+                            </div>
+                            <p class="text-center">Don't have an account? <a href="#" id="show-register" class="text-decoration-none">Register</a></p>
+                        </form>
+
+                        <!-- Register Form -->
+                        <form id="register-form" style="display:none;">
+                            <p class="message text-center" id="register-message"></p>
+                            <div class="mb-3">
+                                <label for="register-username" class="form-label">Username <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="register-username" placeholder="Enter your username" required>
+                                <div class="invalid-feedback" id="register-username-error"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="register-email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="register-email" placeholder="Enter your email" required>
+                                <div class="invalid-feedback" id="register-email-error"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="register-password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="register-password" placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleRegisterPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="register-password-error"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="register-confirm" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="register-confirm" placeholder="Confirm your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <span id="confirm-status" class="input-group-text"></span>
+                                </div>
+                                <div class="invalid-feedback" id="register-confirm-error"></div>
+                            </div>
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary">Register</button>
+                            </div>
+                            <p class="text-center">Already have an account? <a href="#" id="show-login" class="text-decoration-none">Login</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Modal -->
+        <div
+            class="modal fade"
+            id="profileModal"
+            tabindex="-1"
+            aria-labelledby="profileModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold" id="profileModalLabel">
+                            <i class="bi bi-person-circle me-2"></i>Profile
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-person-fill text-white fs-3"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Display Name</label>
+                            <div class="fw-bold" id="profile-displayname">-</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Email</label>
+                            <div id="profile-email">-</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted small">Ethereum Address</label>
+                            <div class="font-monospace small" id="profile-ethaddress">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap 5 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Custom JavaScript -->
+        <script src="js/script.js"></script>
+        <!-- Auth JavaScript -->
+        <script src="js/authjs.js"></script>
+    </body>
+</html>
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
