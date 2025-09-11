@@ -41,6 +41,25 @@ The server will run on http://localhost:3000
   - Returns: `{ userID, displayName, posts[] }`
 - `GET /auth/verify` - Verify JWT token (from cookie)
   - Returns: `{ success, userId, email }`
+<<<<<<< HEAD
+  
+**SIWE / MetaMask Authentication API:**
+- `GET /auth/siwe/nonce` - Get a nonce for SIWE message  
+  - Query: `ethAddress=<string>&chainId=<number>`  
+  - Returns: `{ domain, uri, version, chainId, nonce, issuedAt, statement }`
+- `POST /auth/siwe/verify` - Verify signed SIWE message  
+  - Body: `{ message, signature }`  
+  - Returns:  
+    - `200` - `{ success, userId, email, displayName, ethAddresses }`  
+    - `409` - `{ needsBinding, bindingToken, suggestedDisplayName }`
+- `POST /auth/siwe/bind` - Bind first-time wallet login to account  
+  - Body: `{ bindingToken, email, password, displayName }`  
+  - Returns: `{ success, userId, email, displayName, ethAddresses }`
+- `GET /auth/siwe/verify` - Verify SIWE login status (via JWT in cookie)  
+  - Returns: `{ success, userId, email, displayName, ethAddresses }`
+
+=======
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
 
 ## Development
 For development mode, you can also run:

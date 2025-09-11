@@ -223,7 +223,11 @@ class TwitterClone {
       const postsHTML = postDetails
         .map((post) => {
           const formattedDate = this.formatDate(post.createdAt);
+<<<<<<< HEAD
+
+=======
           
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
           return `
             <div class="post-card" data-post-id="${post.id}">
               <div class="post-header">
@@ -274,7 +278,11 @@ class TwitterClone {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
     return date.toLocaleDateString();
   }
 
@@ -364,6 +372,23 @@ class TwitterClone {
 
   async checkAuthStatus() {
     try {
+<<<<<<< HEAD
+      let response = await fetch(`${this.baseURL}/auth/verify`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      // if auth/verify fail，try SIWE verify
+      if (!response.ok) {
+        response = await fetch(`${this.baseURL}/auth/siwe/verify`, {
+          method: "GET",
+          credentials: "include",
+        });
+      }
+
+      const loginButton = document.querySelector('[data-bs-target="#authModal"]');
+
+=======
       const response = await fetch(`${this.baseURL}/auth/verify`, {
         method: "GET",
         credentials: "include", // Include cookies
@@ -371,18 +396,27 @@ class TwitterClone {
 
       const loginButton = document.querySelector('[data-bs-target="#authModal"]');
       
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           // User is logged in - fetch full profile data
           await this.loadUserProfile(data.userId);
+<<<<<<< HEAD
+
+=======
           
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
           // Update button to show profile instead of auth modal
           loginButton.innerHTML = '<i class="bi bi-person-check me-1"></i>Profile';
           loginButton.classList.remove('btn-outline-primary');
           loginButton.classList.add('btn-success');
           loginButton.setAttribute('data-bs-target', '#profileModal');
+<<<<<<< HEAD
+
+=======
           
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
           // Store user info for later use
           this.currentUser = {
             userId: data.userId,
@@ -417,12 +451,23 @@ class TwitterClone {
 
       if (response.ok) {
         const userData = await response.json();
+<<<<<<< HEAD
+
+        // Update profile modal with user data
+        document.getElementById('profile-displayname').textContent = userData.displayName || '-';
+        document.getElementById('profile-email').textContent = userData.email || '-';
+        const addr = userData.ethAddresses;
+        document.getElementById('profile-ethaddress').textContent = addr ? `${addr.slice(0, 6)}...${addr.slice(-6)}` : '-';
+
+
+=======
         
         // Update profile modal with user data
         document.getElementById('profile-displayname').textContent = userData.displayName || '-';
         document.getElementById('profile-email').textContent = userData.email || '-';
         document.getElementById('profile-ethaddress').textContent = userData.ethAddress || '-';
         
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
         // Store full user data
         this.currentUser = {
           ...this.currentUser,
@@ -448,6 +493,15 @@ class TwitterClone {
         if (profileModal) {
           profileModal.hide();
         }
+<<<<<<< HEAD
+
+        // Reset to logged out state
+        this.setLoggedOutState();
+
+        // Show success message
+        this.showToast("Logged out successfully!", "success");
+
+=======
         
         // Reset to logged out state
         this.setLoggedOutState();
@@ -455,6 +509,7 @@ class TwitterClone {
         // Show success message
         this.showToast("Logged out successfully!", "success");
         
+>>>>>>> aefce402eeb15bd845e7a306871e1d72b2f519df
         // Optionally reload posts to reflect logged out state
         await this.loadPosts(1);
       } else {
