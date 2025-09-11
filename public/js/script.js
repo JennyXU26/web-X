@@ -223,7 +223,6 @@ class TwitterClone {
       const postsHTML = postDetails
         .map((post) => {
           const formattedDate = this.formatDate(post.createdAt);
-          
           return `
             <div class="post-card" data-post-id="${post.id}">
               <div class="post-header">
@@ -274,7 +273,6 @@ class TwitterClone {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
     return date.toLocaleDateString();
   }
 
@@ -364,25 +362,31 @@ class TwitterClone {
 
   async checkAuthStatus() {
     try {
-      const response = await fetch(`${this.baseURL}/auth/verify`, {
+      let response = await fetch(`${this.baseURL}/auth/verify`, {
         method: "GET",
-        credentials: "include", // Include cookies
+        credentials: "include",
       });
 
+      // if auth/verify fail，try SIWE verify
+      if (!response.ok) {
+        response = await fetch(`${this.baseURL}/auth/siwe/verify`, {
+          method: "GET",
+          credentials: "include",
+        });
+      }
+
       const loginButton = document.querySelector('[data-bs-target="#authModal"]');
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           // User is logged in - fetch full profile data
           await this.loadUserProfile(data.userId);
-          
           // Update button to show profile instead of auth modal
           loginButton.innerHTML = '<i class="bi bi-person-check me-1"></i>Profile';
           loginButton.classList.remove('btn-outline-primary');
           loginButton.classList.add('btn-success');
           loginButton.setAttribute('data-bs-target', '#profileModal');
-          
           // Store user info for later use
           this.currentUser = {
             userId: data.userId,
@@ -417,12 +421,14 @@ class TwitterClone {
 
       if (response.ok) {
         const userData = await response.json();
-        
+
         // Update profile modal with user data
         document.getElementById('profile-displayname').textContent = userData.displayName || '-';
         document.getElementById('profile-email').textContent = userData.email || '-';
-        document.getElementById('profile-ethaddress').textContent = userData.ethAddress || '-';
-        
+        const addr = userData.ethAddresses;
+        document.getElementById('profile-ethaddress').textContent = addr ? `${addr.slice(0, 6)}...${addr.slice(-6)}` : '-';
+
+
         // Store full user data
         this.currentUser = {
           ...this.currentUser,
@@ -448,13 +454,13 @@ class TwitterClone {
         if (profileModal) {
           profileModal.hide();
         }
-        
+
         // Reset to logged out state
         this.setLoggedOutState();
-        
+
         // Show success message
         this.showToast("Logged out successfully!", "success");
-        
+
         // Optionally reload posts to reflect logged out state
         await this.loadPosts(1);
       } else {

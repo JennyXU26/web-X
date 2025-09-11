@@ -1,5 +1,5 @@
 // authjs.js - 前端登录/注册逻辑
-
+let isSiweBindingMode = false;
 function showError(id, msg) {
   const el = document.getElementById(id);
   el.style.display = "block";
@@ -19,6 +19,21 @@ function clearMessages() {
     e.innerText = "";
   });
 }
+// construct SIWE matching EIP-4361
+function buildSiweMessage({ domain, address, uri, version, chainId, nonce, issuedAt, statement }) {
+  const exp = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  return `${domain} wants you to sign in with your Ethereum account:
+${address}
+
+${statement}
+
+URI: ${uri}
+Version: ${version}
+Chain ID: ${chainId}
+Nonce: ${nonce}
+Issued At: ${issuedAt}
+Expiration Time: ${exp}`;
+}
 
 // ---------------- 表单切换 ----------------
 document.getElementById("show-register").addEventListener("click", () => {
@@ -27,6 +42,9 @@ document.getElementById("show-register").addEventListener("click", () => {
   document.getElementById("form-title").innerText = "Register";
   clearErrors();
   clearMessages();
+  isSiweBindingMode = false;
+  document.getElementById("siwe-binding-token").value = "";
+  document.getElementById("register-binding-note").style.display = "none";
 });
 
 document.getElementById("show-login").addEventListener("click", () => {
@@ -35,6 +53,9 @@ document.getElementById("show-login").addEventListener("click", () => {
   document.getElementById("form-title").innerText = "Login";
   clearErrors();
   clearMessages();
+  isSiweBindingMode = false;
+  document.getElementById("siwe-binding-token").value = "";
+  document.getElementById("register-binding-note").style.display = "none";
 });
 
 // ---------------- 注册逻辑 ----------------
@@ -57,24 +78,52 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
   console.log("[INFO] Registration attempt:", { email, password, displayName: username });
 
   try {
-    const res = await fetch("/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, displayName: username })
-    });
+    let res, data;
 
-    const data = await res.json();
+    if (isSiweBindingMode) {
+      //bind mode
+      const bindingToken = document.getElementById("siwe-binding-token").value;
+      res = await fetch("/auth/siwe/bind", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bindingToken,
+          email,
+          password,
+          displayName: username
+        })
+      });
+      data = await res.json();
 
-    if (res.ok) {
-      document.getElementById("register-form").reset();
-      document.getElementById("show-login").click();
-      const loginMsg = document.getElementById("login-message");
-      loginMsg.classList.add("success");
-      loginMsg.innerText = "✅ Registration successful! Please login.";
+      if (res.ok) {
+        registerMsg.classList.add("success");
+        registerMsg.innerText = "✅ Wallet linked & account ready!";
+        await window.app.checkAuthStatus();
+        setTimeout(() => { window.location.href = "index.html"; }, 800);
+        return;
+      } else {
+        registerMsg.classList.add("error");
+        registerMsg.innerText = data.error || "Binding failed";
+        return;
+      }
     } else {
-      registerMsg.classList.add("error");
-      registerMsg.innerText = data.error || "Registration failed";
-      console.warn("[WARN] Registration failed:", data);
+      res = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, displayName: username })
+      });
+      data = await res.json();
+
+      if (res.ok) {
+        document.getElementById("register-form").reset();
+        document.getElementById("show-login").click();
+        const loginMsg = document.getElementById("login-message");
+        loginMsg.classList.add("success");
+        loginMsg.innerText = "✅ Registration successful! Please login.";
+      } else {
+        registerMsg.classList.add("error");
+        registerMsg.innerText = data.error || "Registration failed";
+      }
     }
   } catch (err) {
     console.error("[ERROR] Network or server error during registration:", err);
@@ -112,6 +161,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       loginMsg.innerText = "✅ Login successful! Redirecting...";
       // 如果后端返回 token，存储 token
       // localStorage.setItem("token", data.token);
+      await window.app.checkAuthStatus();
       setTimeout(() => {
         window.location.href = "index.html";
       }, 1000);
@@ -170,7 +220,6 @@ function checkPasswordMatch() {
 passwordInput.addEventListener("input", checkPasswordMatch);
 confirmInput.addEventListener("input", checkPasswordMatch);
 
-// ---------------- MetaMask 登录 ----------------
 // ---------------- MetaMask Login ----------------
 let isConnectingWallet = false; // Prevent multiple requests
 
@@ -185,64 +234,123 @@ document.getElementById("metamask-login").addEventListener("click", async () => 
     return;
   }
 
-  if (isConnectingWallet) return; // Prevent duplicate clicks
+  if (isConnectingWallet) return;
   isConnectingWallet = true;
 
   try {
-    // 1️⃣ Check if wallet is already connected
+    //connect wallet
     let accounts = await ethereum.request({ method: "eth_accounts" });
     if (accounts.length === 0) {
-      // If not connected, request connection
       accounts = await ethereum.request({ method: "eth_requestAccounts" });
     }
+    const rawAddress = accounts[0];
+    const walletAddress = ethers.getAddress(rawAddress);
+    const chainId = parseInt(await ethereum.request({ method: "eth_chainId" }), 16);
 
-    const walletAddress = accounts[0];
     console.log("[INFO] Wallet connected:", walletAddress);
     loginMsg.classList.add("success");
     loginMsg.innerText = `Wallet connected: ${walletAddress}`;
 
-    // 2️⃣ Request nonce from backend
-    const nonceRes = await fetch("/auth/metamask/nonce", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ walletAddress })
-    });
-    const { nonce } = await nonceRes.json();
-    console.log("[INFO] Received nonce from server:", nonce);
+    //Request nonce
+    const nonceRes = await fetch(`/auth/siwe/nonce?ethAddress=${encodeURIComponent(walletAddress)}&chainId=${chainId}`);
+    const meta = await nonceRes.json();
+    if (!nonceRes.ok) {
+      throw new Error(meta?.error || "Failed to get nonce");
+    }
+    console.log("[INFO] SIWE meta from server:", meta);
 
-    // 3️⃣ User signs the nonce
+    //User signs the nonce
+    const message = buildSiweMessage({
+      domain: meta.domain,
+      address: walletAddress,
+      uri: meta.uri,
+      version: meta.version,
+      chainId,
+      nonce: meta.nonce,
+      issuedAt: meta.issuedAt,
+      statement: meta.statement
+    });
+    console.log('SIWE message >>>\n' + message + '\n<<< END');
+
+
     const signature = await ethereum.request({
       method: "personal_sign",
-      params: [nonce, walletAddress]
+      params: [message, walletAddress]
     });
     console.log("[INFO] Signature generated:", signature);
 
-    // 4️⃣ Submit signature to backend for verification
-    const verifyRes = await fetch("/auth/metamask/verify", {
+    //signature verification
+    const verifyRes = await fetch("/auth/siwe/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ walletAddress, signature })
+      body: JSON.stringify({ message, signature })
     });
-    const data = await verifyRes.json();
 
-    if (verifyRes.ok) {
+    // 200 success；409 need bind
+    if (verifyRes.status === 200) {
+      const data = await verifyRes.json();
       loginMsg.classList.add("success");
-      loginMsg.innerText = "✅ MetaMask login successful! Redirecting...";
-      // localStorage.setItem("token", data.token);
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1000);
-    } else {
-      loginMsg.classList.add("error");
-      loginMsg.innerText = data.error || "MetaMask login failed";
-      console.warn("[WARN] MetaMask login failed:", data);
+      loginMsg.innerText = "✅ MetaMask login successful!";
+      await window.app.checkAuthStatus();
+      setTimeout(() => { window.location.href = "index.html"; }, 800);
+      return;
     }
+
+    if (verifyRes.status === 409) {
+      const data = await verifyRes.json();
+
+      isSiweBindingMode = true;
+
+      const showRegBtn = document.getElementById("show-register");
+      if (showRegBtn) showRegBtn.click();
+
+      const regForm = document.getElementById("register-form");
+      if (!regForm) {
+        loginMsg.classList.add("error");
+        loginMsg.innerText = "Register form not found.";
+        return;
+      }
+
+      let tokenEl = document.getElementById("siwe-binding-token");
+      if (!tokenEl) {
+        tokenEl = document.createElement("input");
+        tokenEl.type = "hidden";
+        tokenEl.id = "siwe-binding-token";
+        tokenEl.name = "siweBindingToken";
+        regForm.appendChild(tokenEl);
+      }
+      tokenEl.value = data.bindingToken;
+
+      const nameEl = document.getElementById("register-username");
+      if (nameEl) nameEl.value = data.suggestedDisplayName || "";
+
+      let noteEl = document.getElementById("register-binding-note");
+      if (!noteEl) {
+        noteEl = document.createElement("div");
+        noteEl.id = "register-binding-note";
+        noteEl.className = "alert alert-info py-2";
+        noteEl.style.display = "none";
+        regForm.insertAdjacentElement("afterbegin", noteEl);
+      }
+      noteEl.textContent = "You are linking your MetaMask wallet. Please complete registration to bind.";
+      noteEl.style.display = "block";
+
+      const emailEl = document.getElementById("register-email");
+      if (emailEl) emailEl.focus();
+
+      return;
+    }
+
+    const errData = await verifyRes.json().catch(() => ({}));
+    loginMsg.classList.add("error");
+    loginMsg.innerText = errData?.error || "MetaMask login failed";
+    console.warn("[WARN] MetaMask login failed:", errData);
+
   } catch (err) {
     console.error("[ERROR] MetaMask login failed:", err);
     loginMsg.classList.add("error");
     loginMsg.innerText = "MetaMask login failed: " + err.message;
   } finally {
-    isConnectingWallet = false; // Reset flag
+    isConnectingWallet = false;
   }
 });
-
