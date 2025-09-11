@@ -15,6 +15,7 @@ class TwitterClone {
     this.setupEventListeners();
     this.loadPosts(1);
     this.initDarkMode();
+    this.checkAuthStatus();
   }
 
   setupEventListeners() {
@@ -359,6 +360,110 @@ class TwitterClone {
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  async checkAuthStatus() {
+    try {
+      const response = await fetch(`${this.baseURL}/auth/verify`, {
+        method: "GET",
+        credentials: "include", // Include cookies
+      });
+
+      const loginButton = document.querySelector('[data-bs-target="#authModal"]');
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          // User is logged in - fetch full profile data
+          await this.loadUserProfile(data.userId);
+          
+          // Update button to show profile instead of auth modal
+          loginButton.innerHTML = '<i class="bi bi-person-check me-1"></i>Profile';
+          loginButton.classList.remove('btn-outline-primary');
+          loginButton.classList.add('btn-success');
+          loginButton.setAttribute('data-bs-target', '#profileModal');
+          
+          // Store user info for later use
+          this.currentUser = {
+            userId: data.userId,
+            email: data.email
+          };
+        }
+      } else {
+        // User is not logged in
+        this.setLoggedOutState();
+      }
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+      this.setLoggedOutState();
+    }
+  }
+
+  setLoggedOutState() {
+    const loginButton = document.querySelector('[data-bs-target="#authModal"], [data-bs-target="#profileModal"]');
+    loginButton.innerHTML = '<i class="bi bi-person-circle me-1"></i>Login';
+    loginButton.classList.remove('btn-success');
+    loginButton.classList.add('btn-outline-primary');
+    loginButton.setAttribute('data-bs-target', '#authModal');
+    this.currentUser = null;
+  }
+
+  async loadUserProfile(userId) {
+    try {
+      const response = await fetch(`${this.baseURL}/users/${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        
+        // Update profile modal with user data
+        document.getElementById('profile-displayname').textContent = userData.displayName || '-';
+        document.getElementById('profile-email').textContent = userData.email || '-';
+        document.getElementById('profile-ethaddress').textContent = userData.ethAddress || '-';
+        
+        // Store full user data
+        this.currentUser = {
+          ...this.currentUser,
+          displayName: userData.displayName,
+          ethAddress: userData.ethAddress
+        };
+      }
+    } catch (error) {
+      console.error("Error loading user profile:", error);
+    }
+  }
+
+  async handleLogout() {
+    try {
+      const response = await fetch(`${this.baseURL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        // Close profile modal
+        const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+        if (profileModal) {
+          profileModal.hide();
+        }
+        
+        // Reset to logged out state
+        this.setLoggedOutState();
+        
+        // Show success message
+        this.showToast("Logged out successfully!", "success");
+        
+        // Optionally reload posts to reflect logged out state
+        await this.loadPosts(1);
+      } else {
+        throw new Error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+      this.showToast("Logout failed. Please try again.", "error");
+    }
   }
 
   showToast(message, type = "info") {
