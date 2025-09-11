@@ -69,20 +69,26 @@ body {
     background: white;
     border: 1px solid var(--border-gray);
     border-radius: 16px;
-    padding: 20px;
+    padding: 12px 20px 20px 20px;
     margin-bottom: 16px;
     transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .post-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     transform: translateY(-2px);
+    border-color: var(--twitter-blue);
 }
 
 [data-bs-theme="dark"] .post-card {
     background: var(--light-gray);
     border-color: var(--border-gray);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] .post-card:hover {
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
 }
 
 /* Post avatar */
@@ -105,7 +111,7 @@ body {
 */
 
 .post-header {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 
 .post-author {
@@ -120,8 +126,9 @@ body {
 
 .post-divider {
     margin: 12px 0;
-    border-color: var(--border-gray);
-    opacity: 0.5;
+    border: none;
+    border-top: 1px solid #4a5568;
+    opacity: 0.8;
 }
 
 .post-content {
@@ -204,37 +211,60 @@ body {
 .pagination {
     margin: 0;
     border: 1px solid var(--border-gray);
+    overflow: visible;
+    background-color: white;
 }
 
 .pagination .page-link {
     border: none;
-    color: var(--twitter-blue);
+    color: #333;
     font-weight: 500;
     padding: 8px 12px;
+    border-radius: 50% !important;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    border-radius: 50% !important;
 }
 
 .pagination .page-item.active .page-link {
-    background-color: var(--twitter-blue);
-    border-color: var(--twitter-blue);
+    background-color: #6c757d;
+    color: white;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.4);
+    border: none;
 }
 
 .pagination .page-link:hover {
-    background-color: rgba(29, 161, 242, 0.1);
-    color: var(--twitter-dark-blue);
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #333;
 }
 
 [data-bs-theme="dark"] .pagination {
-    background-color: var(--light-gray);
-    border-color: var(--border-gray);
+    background-color: var(--bs-dark) !important;
+    border-color: #495057;
 }
 
 [data-bs-theme="dark"] .pagination .page-link {
     background-color: transparent;
-    color: var(--bs-body-color);
+    color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .pagination .page-item.active .page-link {
+    background-color: #6c757d;
+    color: white;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.6);
 }
 
 [data-bs-theme="dark"] .pagination .page-link:hover {
-    background-color: rgba(29, 161, 242, 0.2);
+    background-color: rgba(108, 117, 125, 0.2);
+    color: #e9ecef;
 }
 
 /* Loading spinner */
