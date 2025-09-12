@@ -1,4 +1,24 @@
-// authjs.js - 前端登录/注册逻辑
+window.app = {
+  checkAuthStatus: async function () {
+    try {
+      const res = await fetch("/auth/status", {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (!res.ok) return { loggedIn: false };
+
+      return await res.json();
+    } catch (err) {
+      console.error("checkAuthStatus error:", err);
+      return { loggedIn: false };
+    }
+  }
+};
+
+
+
 let isSiweBindingMode = false;
 function showError(id, msg) {
   const el = document.getElementById(id);
