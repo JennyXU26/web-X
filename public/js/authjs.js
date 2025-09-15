@@ -55,7 +55,7 @@ Issued At: ${issuedAt}
 Expiration Time: ${exp}`;
 }
 
-// ---------------- 表单切换 ----------------
+// ---------------- form change ----------------
 document.getElementById("show-register").addEventListener("click", () => {
   document.getElementById("login-form").style.display = "none";
   document.getElementById("register-form").style.display = "block";
@@ -78,7 +78,7 @@ document.getElementById("show-login").addEventListener("click", () => {
   document.getElementById("register-binding-note").style.display = "none";
 });
 
-// ---------------- 注册逻辑 ----------------
+// ---------------- register ----------------
 document.getElementById("register-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   clearErrors();
@@ -152,7 +152,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
   }
 });
 
-// ---------------- 登录逻辑 ----------------
+// ---------------- login ----------------
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   clearErrors();
@@ -179,7 +179,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     if (res.ok) {
       loginMsg.classList.add("success");
       loginMsg.innerText = "✅ Login successful! Redirecting...";
-      // 如果后端返回 token，存储 token
+     
       // localStorage.setItem("token", data.token);
       await window.app.checkAuthStatus();
       setTimeout(() => {
@@ -197,49 +197,50 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-// ---------------- 密码显示/隐藏 ----------------
-document.querySelectorAll(".toggle-password").forEach(icon => {
-  icon.addEventListener("click", () => {
-    const targetId = icon.getAttribute("data-target");
-    const input = document.getElementById(targetId);
-    const img = icon.querySelector("img"); // 获取里面的 <img>
+// ---------------- show/hide password ----------------
+document.querySelectorAll("#login-form .btn-outline-secondary, #register-form .btn-outline-secondary").forEach(btn => {
+  btn.addEventListener("click", () => {
+    
+    const input = btn.closest(".input-group").querySelector("input");
+    const icon = btn.querySelector("i"); 
 
     if (input.type === "password") {
       input.type = "text";
-      img.src = "https://img.icons8.com/fluency-systems-regular/48/invisible.png";
-      img.alt = "invisible icon";
+      icon.classList.remove("bi-eye");
+      icon.classList.add("bi-eye-slash");
     } else {
       input.type = "password";
-      img.src = "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png";
-      img.alt = "visible icon";
+      icon.classList.remove("bi-eye-slash");
+      icon.classList.add("bi-eye");
     }
   });
 });
 
-// ---------------- 确认密码实时校验 ----------------
+
+// ---------------- confirm password check ----------------
 const passwordInput = document.getElementById("register-password");
 const confirmInput = document.getElementById("register-confirm");
 const confirmStatus = document.getElementById("confirm-status");
 
 function checkPasswordMatch() {
   if (!confirmInput.value) {
-    confirmStatus.innerText = "";
-    confirmStatus.className = "status-icon";
+    confirmStatus.innerHTML = "";
+    confirmStatus.className = "input-group-text";
     return;
   }
 
   if (passwordInput.value === confirmInput.value) {
-    confirmStatus.innerText = "✔";
-    confirmStatus.className = "status-icon success";
+    confirmStatus.innerHTML = '<i class="bi bi-check-circle text-success"></i>';
+    confirmStatus.className = "input-group-text";
   } else {
-    confirmStatus.innerText = "✖";
-    confirmStatus.className = "status-icon error";
+    confirmStatus.innerHTML = '<i class="bi bi-x-circle text-danger"></i>';
+    confirmStatus.className = "input-group-text";
   }
+  
 }
 
 passwordInput.addEventListener("input", checkPasswordMatch);
 confirmInput.addEventListener("input", checkPasswordMatch);
-
 // ---------------- MetaMask Login ----------------
 let isConnectingWallet = false; // Prevent multiple requests
 

@@ -14,7 +14,7 @@
     <div class="modal-content">
       <h2 id="form-title">Login</h2>
 
-      <!-- 登录表单 -->
+      <!-- login-->
       <form id="login-form">
         <p class="message" id="login-message"></p>
         <div class="form-group">
@@ -39,12 +39,12 @@
         <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
       </form>
 
-      <!-- 注册表单 -->
+      <!-- register-->
       <form id="register-form" style="display:none;">
-        <!-- SIWE 绑定专用：隐藏票据 -->
+        <!-- SIWE -->
         <input type="hidden" id="siwe-binding-token" name="siweBindingToken" value="">
 
-        <!-- SIWE 绑定提示（默认隐藏） -->
+        <!-- SIWE  -->
         <div id="register-binding-note" class="alert alert-info py-2" style="display:none;">
           You are linking your MetaMask wallet to a new/existing account. Please fill the form once to complete binding.
         </div>

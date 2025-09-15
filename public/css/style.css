@@ -351,3 +351,15 @@ body {
 .form-check-input:focus {
     box-shadow: 0 0 0 0.2rem rgba(29, 161, 242, 0.25);
 }
+
+#confirm-status {
+  background-color: #fff;
+  border-left: none; 
+  border-left: 0; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#register-confirm {
+    border-right: none; 
+}

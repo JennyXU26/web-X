@@ -180,13 +180,15 @@
                             <label for="register-confirm" class="form-label">Confirm Password <span
                                     class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="register-confirm"
-                                    placeholder="Confirm your password" required>
-                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <span id="confirm-status" class="input-group-text"></span>
-                            </div>
+<div class="input-group">
+    <input type="password" class="form-control" id="register-confirm" placeholder="Confirm your password" required>
+    <span id="confirm-status" class="input-group-text"></span>
+    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+        <i class="bi bi-eye"></i>
+    </button>
+</div>
+
+
                             <div class="invalid-feedback" id="register-confirm-error"></div>
                         </div>
                         <div class="d-grid gap-2 mb-3">
