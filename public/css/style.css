@@ -363,3 +363,19 @@ body {
 #register-confirm {
     border-right: none; 
 }
+
+/* Footer styles */
+footer {
+    background-color: #f8f9fa !important;
+    border-color: var(--border-gray) !important;
+    transition: all 0.3s ease;
+}
+
+[data-bs-theme="dark"] footer {
+    background-color: var(--light-gray) !important;
+    border-color: var(--border-gray) !important;
+}
+
+[data-bs-theme="dark"] footer .text-muted {
+    color: var(--text-gray) !important;
+}
